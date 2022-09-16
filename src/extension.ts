@@ -19,11 +19,11 @@ let getFunctionsListFromDocumentForTestingAsString = () => {
 	return functions;
 }
 
-let getFunctionNamesList = () => {
-	let editor = window.activeTextEditor;
-	let docText = editor?.document.getText() ?? '';
+let getFunctionNamesList = (text:string) => {
+	// let editor = window.activeTextEditor;
+	// let docText = editor?.document.getText() ?? '';
 	let re = /(function\s+.+?\([\s\S]*?\)[\s\S]+?)\s*\{/g;
-	let arr1 = [...docText?.matchAll(re)].map(e => e[2].replace(/\s+/gm, '')); // .replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
+	let arr1 = [...text?.matchAll(re)].map(e => e[2].replace(/\s+/gm, '')); // .replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
 	return arr1;
 }
 
@@ -62,6 +62,7 @@ let copyToClipboard = (text: string) => {
 let clipboard = '';
 
 export function activate(context: vscode.ExtensionContext) {
+	console.log('sk it is activateddddd ');
 
 	let disposableCopyFns = vscode.commands.registerCommand('sk-blockchain-helper.copy-functions', () => {
 		let fns = getFunctionsListFromDocumentForTestingAsString();
@@ -69,37 +70,31 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	let disposableImportContracts = vscode.commands.registerCommand('sk-blockchain-helper.import-contracts', async () => {
-		// let fns = getFunctionsListFromDocument();
-		// copyToClipboard(fns);
-		// Copy Solidity Functions List
 		let text = await vscode.env.clipboard.readText();
-		console.log(`text is ${text}`);
-
+		let clipboard = text;
 	});
 
+
+
 	const provider2 = vscode.languages.registerCompletionItemProvider(
-		// 'javascript,typescript,solidity',
 		'plaintext',
 		{
 			provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
-				console.log('salamat0');
 
 				// get all text until the `position` and check if it reads `console.`
 				// and if so then complete if `log`, `warn`, and `error`
 				const linePrefix = document.lineAt(position).text.substr(0, position.character);
 				if (!linePrefix.endsWith('vault.')) {
-					console.log('salamat');
 					return undefined;
 				}
-				console.log('=============');
-				console.log(getFunctionNamesList());
-				console.log('=============');
 
-				let arr = getFunctionNamesList().map(e => new vscode.CompletionItem(e, vscode.CompletionItemKind.Method,),);
+				let txt = getFunctionNamesList(clipboard);
+				let arr = txt.map(e => new vscode.CompletionItem(e, vscode.CompletionItemKind.Method,),);
+
 				return arr;
 
 				// return [
-				// 	new vscode.CompletionItem('supMan', vscode.CompletionItemKind.Method),
+				// 	new vscode.CompletionItem('supMan', vscode.CompletionItemKind.Function),
 				// 	new vscode.CompletionItem('how is solidity so far?', vscode.CompletionItemKind.Method),
 				// 	new vscode.CompletionItem('doing well ? ', vscode.CompletionItemKind.Method),
 				// ];
@@ -108,7 +103,7 @@ export function activate(context: vscode.ExtensionContext) {
 		'.' // triggered whenever a '.' is being typed
 	);
 
-	context.subscriptions.push(disposableCopyFns, disposableImportContracts, provider2);
+	context.subscriptions.push(provider2, disposableCopyFns, disposableImportContracts);
 }
 
 // this method is called when your extension is deactivated

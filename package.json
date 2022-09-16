@@ -20,8 +20,7 @@
       {
         "command": "sk-blockchain-helper.copy-functions",
         "title": "Sk - Copy Solidity Functions List"
-      }
-      ,
+      },
       {
         "command": "sk-blockchain-helper.import-contracts",
         "title": "Sk - Import Solidity Contracts from Clipboard"
