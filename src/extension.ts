@@ -19,10 +19,10 @@ let getFunctionsListFromDocumentForTestingAsString = () => {
 	return functions;
 }
 
-let getFunctionNamesList = (text:string) => {
+let getFunctionNamesList = (text: string) => {
 	// let editor = window.activeTextEditor;
 	// let docText = editor?.document.getText() ?? '';
-	let re = /(function\s+.+?\([\s\S]*?\)[\s\S]+?)\s*\{/g;
+	let re = /(function\s+(.+?)\([\s\S]*?\)[\s\S]+?)\s*\{/g;
 	let arr1 = [...text?.matchAll(re)].map(e => e[2].replace(/\s+/gm, '')); // .replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
 	return arr1;
 }
@@ -71,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let disposableImportContracts = vscode.commands.registerCommand('sk-blockchain-helper.import-contracts', async () => {
 		let text = await vscode.env.clipboard.readText();
-		let clipboard = text;
+		clipboard = text;
 	});
 
 
@@ -88,10 +88,19 @@ export function activate(context: vscode.ExtensionContext) {
 					return undefined;
 				}
 
-				let txt = getFunctionNamesList(clipboard);
-				let arr = txt.map(e => new vscode.CompletionItem(e, vscode.CompletionItemKind.Method,),);
+				try {
 
-				return arr;
+					let txt = getFunctionNamesList(clipboard);
+					console.log('text is ');
+					console.log(txt);
+					let arr = txt.map(e => new vscode.CompletionItem(e, vscode.CompletionItemKind.Method,),);
+					return arr;
+
+				} catch (error) {
+					console.log('there is an error');
+					console.log(error);
+					return;
+				}
 
 				// return [
 				// 	new vscode.CompletionItem('supMan', vscode.CompletionItemKind.Function),
