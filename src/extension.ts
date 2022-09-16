@@ -4,6 +4,8 @@ import * as vscode from 'vscode';
 
 import { ExtensionContext, StatusBarAlignment, window, env, StatusBarItem, Selection, workspace, TextEditor, commands } from 'vscode';
 import { basename } from 'path';
+// const fse = require('fs-extra')
+import { readFileSync } from 'fs-extra';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -61,7 +63,21 @@ let copyToClipboard = (text: string) => {
 
 let clipboard = '';
 
+let readContracts = () => {
+	let m = readFileSync('./contracts/Vault.sol');
+	console.log(m);
+}
+
 export function activate(context: vscode.ExtensionContext) {
+	console.log('salamat');
+	try {
+		readContracts();
+	} catch (error) {
+		console.log('error is ');
+		console.log(error);
+	}
+	console.log('done');
+
 	console.log('sk it is activateddddd ');
 
 	let disposableCopyFns = vscode.commands.registerCommand('sk-blockchain-helper.copy-functions', () => {
@@ -76,8 +92,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 
+
+
 	const provider2 = vscode.languages.registerCompletionItemProvider(
-		'plaintext',
+		'javascript',
 		{
 			provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
 
