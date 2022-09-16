@@ -10,7 +10,9 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:sk-blockchain-helper.copy-functions"
+    "*",
+    "onCommand:sk-blockchain-helper.copy-functions",
+    "onCommand:sk-blockchain-helper.import-contracts"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -18,6 +20,11 @@
       {
         "command": "sk-blockchain-helper.copy-functions",
         "title": "Sk - Copy Solidity Functions List"
+      }
+      ,
+      {
+        "command": "sk-blockchain-helper.import-contracts",
+        "title": "Sk - Import Solidity Contracts from Clipboard"
       }
     ]
   },
