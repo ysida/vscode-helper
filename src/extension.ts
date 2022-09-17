@@ -396,40 +396,5 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 }
 
-
 // this method is called when your extension is deactivated
 export function deactivate() { }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// let getSolidityIdentifiers = (text: string) => {
-// 	let re = /((function|modifier)\s+.+?\([\s\S]*?\)[\s\S]+?)\s*\{/g;
-// 	let arr1 = [...text.matchAll(re)].map(e => e[1].replace(/\s+/g, ' ').replace(/^/gm, '- [ ] ').replace(/$/gm, ';'));
-// 	let arr2 = arr1.map(e => {
-// 		let m : SolitityType = 
-// 		let obj: solidityIdentifier = { interface: e, type: SolitityType.FUNCTION };
-// 		return {};
-// 	})
-
-// }
