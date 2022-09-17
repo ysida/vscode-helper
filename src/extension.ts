@@ -43,18 +43,14 @@ enum SolitityType {
 
 }
 
-
-enum SolitityVisibility {
-	public,
-	private,
+interface ContractFunctionInfo {
+	name: string,
+	line: string,
+	visibility: string,
 }
 
-interface solidityIdentifier {
-	type: SolitityType,
-	interface: string;
-}
 
-interface SolidityVariableInfo {
+interface ContractVariableInfo {
 	type: string,
 	name: string,
 	line: string,
@@ -64,8 +60,9 @@ interface SolidityVariableInfo {
 
 let clipboard = '';
 let contractName2ContractText: Record<string, string> = {}
-let contractName2FunctionsList: Record<string, string[]> = {}
-let contractName2VariablesInfo: Record<string, SolidityVariableInfo[]> = {}
+let contractName2FunctionsList0: Record<string, string[]> = {}
+let contractName2FunctionsInfo: Record<string, ContractFunctionInfo[]> = {}
+let contractName2VariablesInfo: Record<string, ContractVariableInfo[]> = {}
 
 
 
@@ -119,10 +116,10 @@ let getContractVariablesInfo = (text: string) => {
 	//   const auth = 'Bearer AUTHORIZATION_TOKEN'
 	// const { groups: { token } } 
 	let l;
-	let infos: SolidityVariableInfo[] = []; // {line: '', type: '', name: ''};
+	let infos: ContractVariableInfo[] = []; // {line: '', type: '', name: ''};
 	while (l = re.exec(text1)) {
 		if (l.groups == null) continue;
-		let info: SolidityVariableInfo = {
+		let info: ContractVariableInfo = {
 			line: l[0],
 			type: l.groups['type'],
 			name: l.groups['name'],
@@ -201,7 +198,7 @@ let extractContractFunctionFromContractsTextMap = () => {
 	for (const [name, text] of Object.entries(contractName2ContractText)) {
 		let re = /(function\s+(.+?)\([\s\S]*?\)[\s\S]+?)\s*\{/g;
 		let arr1 = [...text?.matchAll(re)].map(e => e[2].replace(/\s+/gm, '')); // .replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
-		contractName2FunctionsList[name] = arr1;
+		contractName2FunctionsList0[name] = arr1;
 	}
 }
 
@@ -256,7 +253,7 @@ export async function activate(context: vscode.ExtensionContext) {
 					}
 				}
 				if (!name) { return; }
-				let fns = contractName2FunctionsList[name];
+				let fns = contractName2FunctionsList0[name];
 				let arr: vscode.CompletionItem[] = [];
 
 				// add fns
