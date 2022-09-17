@@ -7,6 +7,7 @@ import { basename } from 'path';
 // const fse = require('fs-extra')
 import { readFileSync } from 'fs-extra';
 import { posix } from 'path';
+import { TextDecoder } from 'util';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -118,6 +119,8 @@ let readContracts = async () => {
 	// console.log(p1);
 }
 
+let contracts: Record<string, string> = {}
+
 export async function activate(context: vscode.ExtensionContext) {
 	// try {
 
@@ -136,70 +139,97 @@ export async function activate(context: vscode.ExtensionContext) {
 		const workspaceFolderUri = vscode.workspace.workspaceFolders![0].uri;
 		const folderPath = posix.relative(workspaceFolderUri.path, '/contracts/')
 		console.log('salamat=============');
-		console.log(folderPath);
+		console.log(workspaceFolderUri);
+		console.log(workspaceFolderUri.path);
+		console.log(workspaceFolderUri.fsPath);
+		let folderContracts = posix.join(workspaceFolderUri.fsPath, '/contracts/');
+		let path = vscode.Uri.parse(folderContracts);
+
+
+
+		for (const [name, type] of await vscode.workspace.fs.readDirectory(path)) {
+
+			if (type === vscode.FileType.File) {
+				// only solidity 
+				if (name.endsWith('.sol') === false) continue;
+				let name2 = name.replace(/\.sol$/, '').toLowerCase();
+				const filePath = posix.join(path.fsPath, name);
+				const stat = await vscode.workspace.fs.stat(path.with({ path: filePath }));
+				console.log('file path is ');
+				const sampleTextEncoded = await vscode.workspace.fs.readFile(vscode.Uri.file(filePath));
+				const sampleText = new TextDecoder('utf-8').decode(sampleTextEncoded);
+				contracts[name2] = sampleText;
+			}
+		}
+
+		console.log(Object.keys(contracts));
+		console.log('----------------');
+
+		console.log(folderContracts);
 		console.log('salamatoooo=================');
 		// await readContracts();
 	} catch (error) {
 		console.log('error is ');
 		console.log(error);
+
+		console.log('done');
+
+		console.log('sk it is activateddddd 0');
+
+		let disposableCopyFns = vscode.commands.registerCommand('sk-blockchain-helper.copy-functions', () => {
+			let fns = getFunctionsListFromDocumentForTestingAsString();
+			copyToClipboard(fns);
+		});
+
+		let disposableImportContracts = vscode.commands.registerCommand('sk-blockchain-helper.import-contracts', async () => {
+			let text = await vscode.env.clipboard.readText();
+			clipboard = text;
+		});
+
+
+
+
+
+
+
+		const provider2 = vscode.languages.registerCompletionItemProvider(
+			'javascript',
+			{
+				provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
+
+					// get all text until the `position` and check if it reads `console.`
+					// and if so then complete if `log`, `warn`, and `error`
+					const linePrefix = document.lineAt(position).text.substr(0, position.character);
+					if (!linePrefix.endsWith('vault.')) {
+						return undefined;
+					}
+
+					try {
+
+						let txt = getFunctionNamesList(clipboard);
+						console.log('text is ');
+						console.log(txt);
+						let arr = txt.map(e => new vscode.CompletionItem(e, vscode.CompletionItemKind.Method,),);
+						return arr;
+
+					} catch (error) {
+						console.log('there is an error');
+						console.log(error);
+						return;
+					}
+
+					// return [
+					// 	new vscode.CompletionItem('supMan', vscode.CompletionItemKind.Function),
+					// 	new vscode.CompletionItem('how is solidity so far?', vscode.CompletionItemKind.Method),
+					// 	new vscode.CompletionItem('doing well ? ', vscode.CompletionItemKind.Method),
+					// ];
+				}
+			},
+			'.' // triggered whenever a '.' is being typed
+		);
+
+		context.subscriptions.push(provider2, disposableCopyFns, disposableImportContracts);
 	}
-	console.log('done');
-
-	console.log('sk it is activateddddd 0');
-
-	let disposableCopyFns = vscode.commands.registerCommand('sk-blockchain-helper.copy-functions', () => {
-		let fns = getFunctionsListFromDocumentForTestingAsString();
-		copyToClipboard(fns);
-	});
-
-	let disposableImportContracts = vscode.commands.registerCommand('sk-blockchain-helper.import-contracts', async () => {
-		let text = await vscode.env.clipboard.readText();
-		clipboard = text;
-	});
-
-
-
-
-
-
-
-	const provider2 = vscode.languages.registerCompletionItemProvider(
-		'javascript',
-		{
-			provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
-
-				// get all text until the `position` and check if it reads `console.`
-				// and if so then complete if `log`, `warn`, and `error`
-				const linePrefix = document.lineAt(position).text.substr(0, position.character);
-				if (!linePrefix.endsWith('vault.')) {
-					return undefined;
-				}
-
-				try {
-
-					let txt = getFunctionNamesList(clipboard);
-					console.log('text is ');
-					console.log(txt);
-					let arr = txt.map(e => new vscode.CompletionItem(e, vscode.CompletionItemKind.Method,),);
-					return arr;
-
-				} catch (error) {
-					console.log('there is an error');
-					console.log(error);
-					return;
-				}
-
-				// return [
-				// 	new vscode.CompletionItem('supMan', vscode.CompletionItemKind.Function),
-				// 	new vscode.CompletionItem('how is solidity so far?', vscode.CompletionItemKind.Method),
-				// 	new vscode.CompletionItem('doing well ? ', vscode.CompletionItemKind.Method),
-				// ];
-			}
-		},
-		'.' // triggered whenever a '.' is being typed
-	);
-
-	context.subscriptions.push(provider2, disposableCopyFns, disposableImportContracts);
 }
 
 // this method is called when your extension is deactivated
