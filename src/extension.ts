@@ -342,10 +342,15 @@ export async function activate(context: vscode.ExtensionContext) {
 	);
 
 	let registerFunctionSignature = (fnInfo: ContractFunctionInfo, instanceName: string) => {
+
+
 		let m: ISignatureHelpProvider = {
-			provideSignatureHelp: (document, position, token) => {
+			provideSignatureHelp: (document, position, token, context) => {
 				let lineText = document.lineAt(position.line).text;
-				var count = (lineText.match(/,/g) || []).length
+				let triggerName = instanceName + "." + fnInfo.name + '(';
+				if (!lineText.includes(triggerName)) return;
+
+				var count = (lineText.match(/,/g) || []).length;
 
 				let paramsInfo: vscode.ParameterInformation[] = [];
 				for (let i = 0; i < fnInfo.arguments.length; i++) {
@@ -365,7 +370,7 @@ export async function activate(context: vscode.ExtensionContext) {
 						// fnInfo.name + (Math.floor(Math.random() * 1000).toString()), //  "work_babatooo",
 						name: name, // fnInfo.name,
 						activeParameter: count,
-						activeSignature: 0, 
+						activeSignature: 0,
 						signatures: <SignatureInformation[]>
 							[
 								{
@@ -379,14 +384,20 @@ export async function activate(context: vscode.ExtensionContext) {
 			},
 		};
 
-		let triggerName = instanceName + "." + fnInfo.name + '(';
-		if (triggerName.length<1) return;
-		if (fnInfo.name.length<1) return;
 
+		// if (triggerName.length < 1) return;
+		// if (fnInfo.name.length < 1) return;
+
+		// console.log('sk trigger name is ' + triggerName);
 		context.subscriptions.push(vscode.languages.registerSignatureHelpProvider(
 			'javascript',
 			m,
-			triggerName,
+			'('
+			// triggerName,
+			// {
+			// 	triggerCharacters: [triggerName],
+			// 	retriggerCharacters: [triggerName],
+			// }
 		));
 	};
 
