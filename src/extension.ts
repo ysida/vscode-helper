@@ -43,10 +43,13 @@ enum SolitityType {
 
 }
 
+
 interface ContractFunctionInfo {
 	name: string,
 	line: string,
 	visibility: string,
+	argumentsString: string,
+	arguments: string[],
 }
 
 
@@ -98,8 +101,49 @@ let getFunctionNamesList = (text: string) => {
 	return arr1;
 }
 
-let getContractVariablesInfo = (text: string) => {
+let getContractFunctionsInfo = (text: string) => {
+	let text1 = text;
+	// text1 = text.replace(/struct [A-Z][\s\S]+?\}/, '');
+	// text1 = text.replace(/event [A-Z][\s\S]+?\);/, '');
+	// text1 = text.replace(/if \([\s\S]+?\}.*/, '');
+	// text1 = text.replace(/else \([\s\S]+?\}.*/, '');
+	// text1 = text.replace(/function [a-z_][\s\S]+?\}.*/, '');
+	// text1 = text.replace(/modifier [a-z_][\s\S]+?\}.*/, '');
 
+	text1 = text.replace(/\s+/g, ' ');
+
+
+	// let arr1 = [...docText?.matchAll(re)].map(e => e[1].replace(/\s+/g, ' ').replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
+	// console.log('arr1 is ');
+	// console.log(arr1.length);
+	// console.log(arr1);
+	// let functions = arr1.join("\n") + "\n";
+	// return functions;
+
+	// let re = /^\s*(?<type>((mapping\(.+?\))|address|uint\d+|string|bytes\d+|bool|[A-Z][A-z]+)([])?) (?<visibility>public|private|external|internal)? ?(?:(constant|immutable) )?(?<name>([a-zA-Z0-9_]*))\s*(=.*)?;/gm;
+	let re = /\s+(function\s+(?<name>.+?)\((?<arguments>[\s\S]*?)\)[\s\S]+?)\s*\{/g;
+
+	let l;
+	let infos: ContractFunctionInfo[] = []; // {line: '', type: '', name: ''};
+	while (l = re.exec(text1)) {
+		if (l.groups == null) continue;
+		let arguments1: string[] = [];
+		arguments1 = l.groups['arguments'].split(',').map(e => e.trim());
+
+		let info: ContractFunctionInfo = {
+			line: l[0],
+			// type: l.groups['type'],
+			name: l.groups['name'],
+			visibility: l.groups['visibility'],
+			argumentsString: l.groups['arguments'],
+			arguments: arguments1,
+		}
+		infos.push(info);
+	}
+	return infos;
+}
+
+let getContractVariablesInfo = (text: string) => {
 	let text1 = text;
 	text1 = text.replace(/struct [A-Z][\s\S]+?\}/, '');
 	text1 = text.replace(/event [A-Z][\s\S]+?\);/, '');
@@ -109,12 +153,6 @@ let getContractVariablesInfo = (text: string) => {
 	text1 = text.replace(/modifier [a-z_][\s\S]+?\}.*/, '');
 
 	let re = /^\s*(?<type>((mapping\(.+?\))|address|uint\d+|string|bytes\d+|bool|[A-Z][A-z]+)([])?) (?<visibility>public|private|external|internal)? ?(?:(constant|immutable) )?(?<name>([a-zA-Z0-9_]*))\s*(=.*)?;/gm;
-	// let arr1 = [...text1?.matchAll(re)]; // .map(e => e[2].replace(/\s+/gm, '')); // .replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
-	// var n = text1?.matchAll(re);
-	// console.log('salamt');
-
-	//   const auth = 'Bearer AUTHORIZATION_TOKEN'
-	// const { groups: { token } } 
 	let l;
 	let infos: ContractVariableInfo[] = []; // {line: '', type: '', name: ''};
 	while (l = re.exec(text1)) {
@@ -128,17 +166,6 @@ let getContractVariablesInfo = (text: string) => {
 		infos.push(info);
 	}
 	return infos;
-
-	// var l = re.exec(text);
-	// console.log('l sis ');
-	// // console.log(token)
-
-	// contractName2VariablesList.
-
-	// return arr1;
-
-	// const { groups: { token } } = /Bearer (?<token>[^ $]*)/.exec()
-	// console.log(token)
 }
 
 
@@ -210,11 +237,19 @@ let extractContractVariablesFromContractsTextMap = () => {
 	}
 }
 
+let extractContractFunctionsFromContractsTextMap = () => {
+	for (const [name, text] of Object.entries(contractName2ContractText)) {
+		var infos = getContractFunctionsInfo(text);
+		contractName2FunctionsInfo[name] = infos;
+	}
+}
+
 
 let initContractsData = async () => {
 	await injectContractsFromContractsFolder();
 	extractContractFunctionFromContractsTextMap();
 	extractContractVariablesFromContractsTextMap();
+	extractContractFunctionsFromContractsTextMap();
 }
 
 
