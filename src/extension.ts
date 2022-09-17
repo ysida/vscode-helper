@@ -357,12 +357,15 @@ export async function activate(context: vscode.ExtensionContext) {
 					paramsInfo.push(m);
 				}
 
+
+				let name = instanceName + "." + fnInfo.name;
 				return <SignatureHelp>
 					{
-						id: fnInfo.name + (Math.floor(Math.random() * 1000).toString()), //  "work_babatooo",
-						name: fnInfo.name,
+						id: name,
+						// fnInfo.name + (Math.floor(Math.random() * 1000).toString()), //  "work_babatooo",
+						name: name, // fnInfo.name,
 						activeParameter: count,
-						activeSignature: 0,
+						activeSignature: 0, 
 						signatures: <SignatureInformation[]>
 							[
 								{
@@ -371,7 +374,7 @@ export async function activate(context: vscode.ExtensionContext) {
 								}
 							],
 						parameterCount: paramsInfo.length,
-						lastParameterIsList: false
+						lastParameterIsList: false,
 					};
 			},
 		};
@@ -381,7 +384,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		if (fnInfo.name.length<1) return;
 
 		context.subscriptions.push(vscode.languages.registerSignatureHelpProvider(
-
 			'javascript',
 			m,
 			triggerName,
