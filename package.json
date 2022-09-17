@@ -1,5 +1,6 @@
 {
   "name": "sk-blockchain-helper1",
+  "publisher": "oliveoverflow",
   "displayName": "sk blockchain helper",
   "description": "add suggestions to truffle suite javascript testing by reading from solidity contracts",
   "version": "0.0.5",
