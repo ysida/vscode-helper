@@ -302,8 +302,6 @@ export async function activate(context: vscode.ExtensionContext) {
 						m.documentation = "do something";
 						return m;
 					},)];
-					console.log('salamattt');
-					// 	return [new vscode.CompletionItem('supMan', vscode.CompletionItemKind.Function),];
 
 				} catch (error) {
 					console.log('there is an error');
@@ -394,5 +392,4 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() { }
