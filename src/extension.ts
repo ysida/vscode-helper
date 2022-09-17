@@ -258,15 +258,16 @@ const disposableCopyFns = vscode.commands.registerCommand('sk-blockchain-helper.
 	copyToClipboard(fns);
 });
 
+const disposableUpdateContractData = vscode.commands.registerCommand('sk-blockchain-helper.update-contracts-data', () => {
+	initContractsData();
+});
+
 const disposableImportContracts = vscode.commands.registerCommand('sk-blockchain-helper.import-contracts', async () => {
 	let text = await vscode.env.clipboard.readText();
 	clipboard = text;
 });
 
 
-let updateContractsData = () => {
-	initContractsData();
-}
 
 export async function activate(context: vscode.ExtensionContext) {
 	// await new Promise(resolve => setTimeout(resolve, 3000));
@@ -335,7 +336,12 @@ export async function activate(context: vscode.ExtensionContext) {
 		'.' // triggered whenever a '.' is being typed
 	);
 
-	context.subscriptions.push(contractFunctionsProvider, disposableCopyFns, disposableImportContracts);
+	context.subscriptions.push(
+		disposableCopyFns,
+		disposableImportContracts,
+		disposableUpdateContractData,
+		contractFunctionsProvider,
+	);
 
 	// TODO add signatures here
 

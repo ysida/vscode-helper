@@ -12,7 +12,8 @@
   "activationEvents": [
     "*",
     "onCommand:sk-blockchain-helper.copy-functions",
-    "onCommand:sk-blockchain-helper.import-contracts"
+    "onCommand:sk-blockchain-helper.import-contracts",
+    "onCommand:sk-blockchain-helper.update-contracts-data"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -24,6 +25,10 @@
       {
         "command": "sk-blockchain-helper.import-contracts",
         "title": "Sk - Import Solidity Contracts from Clipboard"
+      },
+      {
+        "command": "sk-blockchain-helper.update-contracts-data",
+        "title": "Sk - Update Contracts Data"
       }
     ]
   },
