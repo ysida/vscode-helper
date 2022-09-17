@@ -55,16 +55,17 @@ interface solidityIdentifier {
 }
 
 interface SolidityVariableInfo {
-	type:  string,
+	type: string,
 	name: string,
-	line: string
+	line: string,
+	visibility: string
 }
 
 
 let clipboard = '';
 let contractName2ContractText: Record<string, string> = {}
 let contractName2FunctionsList: Record<string, string[]> = {}
-let contractName2VariablesList: Record<string, SolidityVariableInfo[]> = {}
+let contractName2VariablesInfo: Record<string, SolidityVariableInfo[]> = {}
 
 
 
@@ -100,7 +101,7 @@ let getFunctionNamesList = (text: string) => {
 	return arr1;
 }
 
-let getContractParameters = (text: string) => {
+let getContractVariablesInfo = (text: string) => {
 
 	let text1 = text;
 	text1 = text.replace(/struct [A-Z][\s\S]+?\}/, '');
@@ -117,16 +118,25 @@ let getContractParameters = (text: string) => {
 	//   const auth = 'Bearer AUTHORIZATION_TOKEN'
 	// const { groups: { token } } 
 	let l;
+	let infos: SolidityVariableInfo[] = []; // {line: '', type: '', name: ''};
 	while (l = re.exec(text1)) {
-		console.log('salamt');
+		if (l.groups == null) continue;
+		let info: SolidityVariableInfo = {
+			line: l[0],
+			type: l.groups['type'],
+			name: l.groups['name'],
+			visibility: l.groups['visibility']
+		}
+		infos.push(info);
 	}
+	return infos;
 
 	// var l = re.exec(text);
 	// console.log('l sis ');
 	// // console.log(token)
 
 	// contractName2VariablesList.
-	
+
 	// return arr1;
 
 	// const { groups: { token } } = /Bearer (?<token>[^ $]*)/.exec()
@@ -197,8 +207,8 @@ let extractContractFunctionFromContractsTextMap = () => {
 
 let extractContractVariablesFromContractsTextMap = () => {
 	for (const [name, text] of Object.entries(contractName2ContractText)) {
-		var list = getContractParameters(text);
-		console.log('list is ' + list);
+		var infos = getContractVariablesInfo(text);
+		contractName2VariablesInfo[name] = infos;
 	}
 }
 
@@ -246,23 +256,46 @@ export async function activate(context: vscode.ExtensionContext) {
 				}
 				if (!name) { return; }
 				let fns = contractName2FunctionsList[name];
+				let arr: vscode.CompletionItem[] = [];
 
+				// add fns
 				try {
-					let arr = fns.map(e => {
+					arr = [...arr, ...fns.map(e => {
 						let m = new vscode.CompletionItem(e, vscode.CompletionItemKind.Function,);
 						m.sortText = "aaa";
 						m.documentation = "do something";
 						return m;
-					},);
+					},)];
 					console.log('salamattt');
 					// 	return [new vscode.CompletionItem('supMan', vscode.CompletionItemKind.Function),];
-					return [...arr];
 
 				} catch (error) {
 					console.log('there is an error');
 					console.log(error);
 					return;
 				}
+
+
+				let variables = contractName2VariablesInfo[name];
+
+				// add variables
+				try {
+					arr = [...arr, ...variables.map(e => {
+						let m = new vscode.CompletionItem(e.name, vscode.CompletionItemKind.Variable);
+						m.sortText = "aaa";
+						m.documentation = "some variable";
+						return m;
+					},)];
+					console.log('salamattt');
+					// 	return [new vscode.CompletionItem('supMan', vscode.CompletionItemKind.Function),];
+
+				} catch (error) {
+					console.log('there is an error');
+					console.log(error);
+					return;
+				}
+
+				return arr;
 
 			}
 		},
