@@ -21,10 +21,10 @@ The following features are provided:
     - ensure that all solidity contracts are under ./contracts/ folder
     - ensure that tests are under ./test/ folder
 
-2. Use a lowercase name for contract's intance name
+2. Use a lowercase name for contract's intance name, matching contract's file basename
 
 
-for example, 
+for example, if solidity file is Token.sol, the autocompletion is provided for the word **token.** in lowercase.
 
 ```js
 const Token = artifacts.require("Token.sol");
