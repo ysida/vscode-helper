@@ -1,3 +1,5 @@
+// https://github.com/Janne252/vscode-test-signatureHelpProvider/
+
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
@@ -159,7 +161,8 @@ export async function activate(context: vscode.ExtensionContext) {
 				try {
 					let arr = fns.map(e => {
 						let m = new vscode.CompletionItem(e, vscode.CompletionItemKind.Function,);
-						m.sortText = "01";
+						m.sortText = "aaa";
+						m.documentation = "do something";
 						return m;
 					},);
 					console.log('salamattt');
