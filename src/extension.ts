@@ -262,7 +262,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				try {
 					arr = [...arr, ...fns.map(e => {
 						let m = new vscode.CompletionItem(e, vscode.CompletionItemKind.Function,);
-						m.sortText = "aaa";
+						m.sortText = "bbb";
 						m.documentation = "do something";
 						return m;
 					},)];
