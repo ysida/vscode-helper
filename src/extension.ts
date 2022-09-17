@@ -298,7 +298,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				try {
 					arr = [...arr, ...fns.map(e => {
 						let m = new vscode.CompletionItem(e, vscode.CompletionItemKind.Function,);
-						m.sortText = "bbb";
+						m.sortText = "aaa";
 						m.documentation = "do something";
 						return m;
 					},)];
@@ -318,12 +318,10 @@ export async function activate(context: vscode.ExtensionContext) {
 				try {
 					arr = [...arr, ...variables.map(e => {
 						let m = new vscode.CompletionItem(e.name, vscode.CompletionItemKind.Variable);
-						m.sortText = "aaa";
-						m.documentation = "some variable";
+						m.sortText = "bbb";
+						// m.documentation = "some variable";
 						return m;
 					},)];
-					console.log('salamattt');
-					// 	return [new vscode.CompletionItem('supMan', vscode.CompletionItemKind.Function),];
 
 				} catch (error) {
 					console.log('there is an error');
