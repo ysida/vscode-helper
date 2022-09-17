@@ -111,7 +111,7 @@ let getContractVariablesInfo = (text: string) => {
 	text1 = text.replace(/function [a-z_][\s\S]+?\}.*/, '');
 	text1 = text.replace(/modifier [a-z_][\s\S]+?\}.*/, '');
 
-	let re = /^\s*(?<type>((mapping\(.+?\))|address|uint\d+|string|bytes\d+|bool|[A-Z][A-z]+)([])?) ?(?<visibility>public|private|external|internal)? ?(?:(constant|immutable) )?(?<name>([a-zA-Z0-9_]*))\s*(=.*)?;/gm;
+	let re = /^\s*(?<type>((mapping\(.+?\))|address|uint\d+|string|bytes\d+|bool|[A-Z][A-z]+)([])?) (?<visibility>public|private|external|internal)? ?(?:(constant|immutable) )?(?<name>([a-zA-Z0-9_]*))\s*(=.*)?;/gm;
 	// let arr1 = [...text1?.matchAll(re)]; // .map(e => e[2].replace(/\s+/gm, '')); // .replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
 	// var n = text1?.matchAll(re);
 	// console.log('salamt');
