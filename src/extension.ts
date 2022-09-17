@@ -130,9 +130,11 @@ let getContractFunctionsInfo = (text: string) => {
 		let arguments1: string[] = [];
 		arguments1 = l.groups['arguments'].split(',').map(e => e.trim());
 
+		// " function transferOwnership(address _newOwner) external onlyOwner {"
+		let line = l[0].replace(/\s+(.*)\s+\{\s*/, '$1')
+
 		let info: ContractFunctionInfo = {
-			line: l[0],
-			// type: l.groups['type'],
+			line: line, // l[0],
 			name: l.groups['name'],
 			visibility: l.groups['visibility'],
 			argumentsString: l.groups['arguments'],
@@ -343,11 +345,57 @@ export async function activate(context: vscode.ExtensionContext) {
 		contractFunctionsProvider,
 	);
 
-	// TODO add signatures here
+	let registerFunctionSignature = (fnInfo: ContractFunctionInfo, instanceName: string) => {
+		var m: ISignatureHelpProvider = {
+			provideSignatureHelp: (document, position, token) => {
+				let lineText = document.lineAt(position.line).text;
+				var count = (lineText.match(/,/g) || []).length
 
+				let paramsInfo: vscode.ParameterInformation[] = [];
+				for (let i = 0; i < fnInfo.arguments.length; i++) {
+					const argument = fnInfo.arguments[i];
+					let m: vscode.ParameterInformation = {
+						label: argument,
+						// documentation: argument,
+					};
+					paramsInfo.push(m);
+				}
 
+				return <SignatureHelp>
+					{
+						id: fnInfo.name, //  "work_babatooo",
+						name: fnInfo.name,
+						activeParameter: count,
+						activeSignature: 0,
+						signatures: <SignatureInformation[]>
+							[
+								{
+									label: fnInfo.line,
+									parameters: paramsInfo,
+								}
+							],
+						parameterCount: paramsInfo.length,
+						lastParameterIsList: false
+					};
+			},
+		};
+		let triggerName = instanceName + "." + fnInfo.name;
 
+		context.subscriptions.push(vscode.languages.registerSignatureHelpProvider(
+			'javascript',
+			m,
+			triggerName,
+		));
+	};
+
+	for (const [contractName, value] of Object.entries(contractName2FunctionsInfo)) {
+		for (let i = 0; i < value.length; i++) {
+			const element = value[i];
+			registerFunctionSignature(element, contractName);
+		}
+	}
 }
+
 
 // this method is called when your extension is deactivated
 export function deactivate() { }
