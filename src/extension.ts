@@ -342,7 +342,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	);
 
 	let registerFunctionSignature = (fnInfo: ContractFunctionInfo, instanceName: string) => {
-		var m: ISignatureHelpProvider = {
+		let m: ISignatureHelpProvider = {
 			provideSignatureHelp: (document, position, token) => {
 				let lineText = document.lineAt(position.line).text;
 				var count = (lineText.match(/,/g) || []).length
@@ -359,7 +359,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 				return <SignatureHelp>
 					{
-						id: fnInfo.name, //  "work_babatooo",
+						id: fnInfo.name + (Math.floor(Math.random() * 1000).toString()), //  "work_babatooo",
 						name: fnInfo.name,
 						activeParameter: count,
 						activeSignature: 0,
@@ -375,9 +375,13 @@ export async function activate(context: vscode.ExtensionContext) {
 					};
 			},
 		};
-		let triggerName = instanceName + "." + fnInfo.name;
+
+		let triggerName = instanceName + "." + fnInfo.name + '(';
+		if (triggerName.length<1) return;
+		if (fnInfo.name.length<1) return;
 
 		context.subscriptions.push(vscode.languages.registerSignatureHelpProvider(
+
 			'javascript',
 			m,
 			triggerName,
@@ -386,8 +390,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	for (const [contractName, value] of Object.entries(contractName2FunctionsInfo)) {
 		for (let i = 0; i < value.length; i++) {
-			const element = value[i];
-			registerFunctionSignature(element, contractName);
+			const element1 = value[i];
+			registerFunctionSignature(element1, contractName);
 		}
 	}
 }
