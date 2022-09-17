@@ -100,10 +100,30 @@ let getFunctionNamesList = (text: string) => {
 	return arr1;
 }
 
-let getPublicParameters = (text: string) => {
-	let re = /^\s*(?<type>((mapping\(.+?\))|address|uint\d+|string|[A-z]+)([])?) ?(?<visibility>public|private|external|internal)? ?(?:(constant|immutable) )?(?<name>([a-zA-Z0-9_]*))\s*(=.*)?;/gm;
-	let arr1 = [...text?.matchAll(re)]; // .map(e => e[2].replace(/\s+/gm, '')); // .replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
-	console.log('salamt');
+let getContractParameters = (text: string) => {
+
+	let text1 = text;
+	text1 = text.replace(/struct [A-Z][\s\S]+?\}/, '');
+	text1 = text.replace(/if \([\s\S]+?\}.*/, '');
+	text1 = text.replace(/else \([\s\S]+?\}.*/, '');
+	text1 = text.replace(/function [a-z_][\s\S]+?\}.*/, '');
+	text1 = text.replace(/modifier [a-z_][\s\S]+?\}.*/, '');
+
+	let re = /^\s*(?<type>((mapping\(.+?\))|address|uint\d+|string|bytes\d+|bool|[A-Z][A-z]+)([])?) ?(?<visibility>public|private|external|internal)? ?(?:(constant|immutable) )?(?<name>([a-zA-Z0-9_]*))\s*(=.*)?;/gm;
+	// let arr1 = [...text1?.matchAll(re)]; // .map(e => e[2].replace(/\s+/gm, '')); // .replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
+	// var n = text1?.matchAll(re);
+	// console.log('salamt');
+
+	//   const auth = 'Bearer AUTHORIZATION_TOKEN'
+	// const { groups: { token } } 
+	let l;
+	while (l = re.exec(text1)) {
+		console.log('salamt');
+	}
+
+	// var l = re.exec(text);
+	// console.log('l sis ');
+	// // console.log(token)
 
 	// contractName2VariablesList.
 	
@@ -177,9 +197,8 @@ let extractContractFunctionFromContractsTextMap = () => {
 
 let extractContractVariablesFromContractsTextMap = () => {
 	for (const [name, text] of Object.entries(contractName2ContractText)) {
-		let re = /(function\s+(.+?)\([\s\S]*?\)[\s\S]+?)\s*\{/g;
-		let arr1 = [...text?.matchAll(re)].map(e => e[2].replace(/\s+/gm, '')); // .replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
-		contractName2FunctionsList[name] = arr1;
+		var list = getContractParameters(text);
+		console.log('list is ' + list);
 	}
 }
 
@@ -187,6 +206,7 @@ let extractContractVariablesFromContractsTextMap = () => {
 let initContractsData = async () => {
 	await injectContractsFromContractsFolder();
 	extractContractFunctionFromContractsTextMap();
+	extractContractVariablesFromContractsTextMap();
 }
 
 
