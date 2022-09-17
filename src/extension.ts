@@ -105,6 +105,7 @@ let getContractVariablesInfo = (text: string) => {
 
 	let text1 = text;
 	text1 = text.replace(/struct [A-Z][\s\S]+?\}/, '');
+	text1 = text.replace(/event [A-Z][\s\S]+?\);/, '');
 	text1 = text.replace(/if \([\s\S]+?\}.*/, '');
 	text1 = text.replace(/else \([\s\S]+?\}.*/, '');
 	text1 = text.replace(/function [a-z_][\s\S]+?\}.*/, '');
