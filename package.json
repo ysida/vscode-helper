@@ -3,7 +3,7 @@
   "publisher": "oliveoverflow",
   "displayName": "Blockchain Truffle Suite Helper",
   "description": "add suggestions to truffle suite javascript testing files by reading solidity contracts",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.71.0"

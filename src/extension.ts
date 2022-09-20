@@ -5,44 +5,15 @@
 import * as vscode from 'vscode';
 
 import {
-	ExtensionContext,
-	StatusBarAlignment,
 	window,
 	env,
-	StatusBarItem,
-	Selection,
-	workspace,
-	TextEditor,
-	commands,
 	SignatureHelp,
 	SignatureHelpProvider as ISignatureHelpProvider,
 	SignatureInformation
 
 } from 'vscode';
-import { basename } from 'path';
-// const fse = require('fs-extra')
-import { readFileSync } from 'fs-extra';
 import { posix } from 'path';
 import { TextDecoder } from 'util';
-
-// import {
-// 	ExtensionContext, languages,
-// 	SignatureHelp,
-// 	SignatureHelpProvider as ISignatureHelpProvider,
-// 	SignatureInformation
-// } from 'vscode';
-
-
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-
-enum SolitityType {
-	FUNCTION,
-	MODIFIER,
-
-
-}
-
 
 interface ContractFunctionInfo {
 	name: string,
@@ -52,7 +23,6 @@ interface ContractFunctionInfo {
 	arguments: string[],
 }
 
-
 interface ContractVariableInfo {
 	type: string,
 	name: string,
@@ -60,8 +30,6 @@ interface ContractVariableInfo {
 	visibility: string
 }
 
-
-let clipboard = '';
 let contractName2ContractText: Record<string, string> = {}
 let contractName2FunctionsList0: Record<string, string[]> = {}
 let contractName2FunctionsInfo: Record<string, ContractFunctionInfo[]> = {}
@@ -81,46 +49,12 @@ let getFunctionsListFromDocumentForTestingAsString = () => {
 	return functions;
 }
 
-let getPublicFromDocumentForTestingAsString = () => {
-	let editor = window.activeTextEditor;
-	let docText = editor?.document.getText() ?? '';
-	// let re = /^\s+(.*?)\s+(?<visibility>public|private)\s*(constant)?\s*(?<name>.+?)(\s+|;)/gm;
-	let re = /^\s+([^\/]*?)\s+(?<visibility>public|private)?\s*/gm;
-	let arr1 = [...docText?.matchAll(re)].map(e => e[1].replace(/\s+/g, ' ').replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
-	console.log('arr1 is ');
-	console.log(arr1.length);
-	console.log(arr1);
-	let functions = arr1.join("\n") + "\n";
-	return functions;
-}
-
-
-let getFunctionNamesList = (text: string) => {
-	let re = /(function\s+(.+?)\([\s\S]*?\)[\s\S]+?)\s*\{/g;
-	let arr1 = [...text?.matchAll(re)].map(e => e[2].replace(/\s+/gm, '')); // .replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
-	return arr1;
-}
 
 let getContractFunctionsInfo = (text: string) => {
 	let text1 = text;
-	// text1 = text.replace(/struct [A-Z][\s\S]+?\}/, '');
-	// text1 = text.replace(/event [A-Z][\s\S]+?\);/, '');
-	// text1 = text.replace(/if \([\s\S]+?\}.*/, '');
-	// text1 = text.replace(/else \([\s\S]+?\}.*/, '');
-	// text1 = text.replace(/function [a-z_][\s\S]+?\}.*/, '');
-	// text1 = text.replace(/modifier [a-z_][\s\S]+?\}.*/, '');
 
 	text1 = text.replace(/\s+/g, ' ');
 
-
-	// let arr1 = [...docText?.matchAll(re)].map(e => e[1].replace(/\s+/g, ' ').replace(/^/gm, '- [ ] ').replace(/$/gm, ';'))
-	// console.log('arr1 is ');
-	// console.log(arr1.length);
-	// console.log(arr1);
-	// let functions = arr1.join("\n") + "\n";
-	// return functions;
-
-	// let re = /^\s*(?<type>((mapping\(.+?\))|address|uint\d+|string|bytes\d+|bool|[A-Z][A-z]+)([])?) (?<visibility>public|private|external|internal)? ?(?:(constant|immutable) )?(?<name>([a-zA-Z0-9_]*))\s*(=.*)?;/gm;
 	let re = /\s+(function\s+(?<name>.+?)\((?<arguments>[\s\S]*?)\)[\s\S]+?)\s*\{/g;
 
 	let l;
@@ -172,36 +106,11 @@ let getContractVariablesInfo = (text: string) => {
 
 
 let copyToClipboard = (text: string) => {
-	// let wordToCopy = functions;
 	env.clipboard.writeText(text).then((text) => {
-		const message = `word ${text} is copied!`;
-		vscode.window.showInformationMessage(message);
+		// const message = `word ${text} is copied!`;
+		// vscode.window.showInformationMessage(message);
 	});
 }
-
-
-let readContracts = async () => {
-	// let m = readFileSync('./contracts/Vault.sol');
-	// let m = await vscode.workspace.fs.readDirectory(vscode.Uri.parse(vscode.workspace.asRelativePath('.', true)));
-	// let m = await vscode.workspace.fs.readDirectory(vscode.Uri.));
-	// console.log(m);
-
-	if (vscode.workspace.workspaceFolders == null) return;
-	const workspaceFolderUri = vscode.workspace.workspaceFolders![0].uri;
-	const folderPath = posix.relative(workspaceFolderUri.path, '/contracts/')
-	console.log(folderPath);
-
-	// window.activeTextEditor.document.uri;
-	// const folderPath0 = posix.dirname(fileUri.path);
-	// const folderPath = posis.relative(folderPath0, '../contracts/')
-	// const folderUri = fileUri.with({ path: folderPath });
-	// const doc = await vscode.workspace.openTextDocument({ content: "salamatooo" });
-
-	// const p1 = vscode.window.activeTextEditor.document.uri.path;
-	// const p2 = vscode.window.activeTextEditor.document.uri.path;
-	// console.log(p1);
-}
-
 
 let injectContractsFromContractsFolder = async () => {
 	const workspaceFolderUri = vscode.workspace.workspaceFolders![0].uri;
@@ -266,15 +175,15 @@ const disposableUpdateContractData = vscode.commands.registerCommand('sk-blockch
 
 const disposableImportContracts = vscode.commands.registerCommand('sk-blockchain-helper.import-contracts', async () => {
 	let text = await vscode.env.clipboard.readText();
-	clipboard = text;
+	// TODO 
 });
 
 
 
 export async function activate(context: vscode.ExtensionContext) {
-	// await new Promise(resolve => setTimeout(resolve, 3000));
+
 	await initContractsData();
-	await new Promise(resolve => setTimeout(resolve, 300));
+	await new Promise(resolve => setTimeout(resolve, 200));
 
 	const contractFunctionsProvider = vscode.languages.registerCompletionItemProvider(
 		'javascript',
@@ -343,8 +252,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	let registerFunctionSignature = (fnInfo: ContractFunctionInfo, instanceName: string) => {
 
-
-		let m: ISignatureHelpProvider = {
+		let functionHelpProvider: ISignatureHelpProvider = {
 			provideSignatureHelp: (document, position, token, context) => {
 				let lineText = document.lineAt(position.line).text;
 				let triggerName = instanceName + "." + fnInfo.name + '(';
@@ -385,19 +293,10 @@ export async function activate(context: vscode.ExtensionContext) {
 		};
 
 
-		// if (triggerName.length < 1) return;
-		// if (fnInfo.name.length < 1) return;
-
-		// console.log('sk trigger name is ' + triggerName);
 		context.subscriptions.push(vscode.languages.registerSignatureHelpProvider(
 			'javascript',
-			m,
-			'('
-			// triggerName,
-			// {
-			// 	triggerCharacters: [triggerName],
-			// 	retriggerCharacters: [triggerName],
-			// }
+			functionHelpProvider,
+			'(' // trigger character
 		));
 	};
 
