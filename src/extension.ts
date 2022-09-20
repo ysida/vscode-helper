@@ -114,19 +114,32 @@ let copyToClipboard = (text: string) => {
 
 let injectContractsFromContractsFolder = async () => {
 	const workspaceFolderUri = vscode.workspace.workspaceFolders![0].uri;
+
+	let paths: string[] = [];
+	let relativePaths = ['/contracts', '/packages/hardhat/contracts']
+	for (let i = 0; i < relativePaths.length; i++) {
+		const path = posix.join(workspaceFolderUri.fsPath, relativePaths[i]);
+		paths.push(path);
+	}
+
 	let folderContracts = posix.join(workspaceFolderUri.fsPath, '/contracts/');
-	let path = vscode.Uri.parse(folderContracts);
-	for (const [name, type] of await vscode.workspace.fs.readDirectory(path)) {
-		if (type === vscode.FileType.File) {
-			if (name.endsWith('.sol') === false) continue;
-			let name2 = name.replace(/\.sol$/, '').toLowerCase();
-			const filePath = posix.join(path.fsPath, name);
-			// const stat = await vscode.workspace.fs.stat(path.with({ path: filePath }));
-			console.log('file path is ');
-			console.log(filePath);
-			const sampleTextEncoded = await vscode.workspace.fs.readFile(vscode.Uri.file(filePath));
-			const sampleText = new TextDecoder('utf-8').decode(sampleTextEncoded);
-			contractName2ContractText[name2] = sampleText;
+
+	for (let i = 0; i < paths.length; i++) {
+		const pathString = paths[i];
+		let pathUri = vscode.Uri.parse(pathString);
+
+		for (const [name, type] of await vscode.workspace.fs.readDirectory(pathUri)) {
+			if (type === vscode.FileType.File) {
+				if (name.endsWith('.sol') === false) continue;
+				let name2 = name.replace(/\.sol$/, '').toLowerCase();
+				const filePath = posix.join(pathUri.fsPath, name);
+				// const stat = await vscode.workspace.fs.stat(path.with({ path: filePath }));
+				console.log('file path is ');
+				console.log(filePath);
+				const sampleTextEncoded = await vscode.workspace.fs.readFile(vscode.Uri.file(filePath));
+				const sampleText = new TextDecoder('utf-8').decode(sampleTextEncoded);
+				contractName2ContractText[name2] = sampleText;
+			}
 		}
 	}
 }
@@ -179,8 +192,7 @@ const disposableImportContracts = vscode.commands.registerCommand('sk-blockchain
 });
 
 
-
-export async function activate(context: vscode.ExtensionContext) {
+const doAll1 = async (context: vscode.ExtensionContext) => {
 
 	await initContractsData();
 	await new Promise(resolve => setTimeout(resolve, 200));
@@ -306,6 +318,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			registerFunctionSignature(element1, contractName);
 		}
 	}
+}
+
+export async function activate(context: vscode.ExtensionContext) {
+	doAll1(context);
 }
 
 export function deactivate() { }
