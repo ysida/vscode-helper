@@ -3,6 +3,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as fse from 'fs-extra';
 
 import {
 	window,
@@ -122,24 +123,29 @@ let injectContractsFromContractsFolder = async () => {
 		paths.push(path);
 	}
 
-	let folderContracts = posix.join(workspaceFolderUri.fsPath, '/contracts/');
-
 	for (let i = 0; i < paths.length; i++) {
-		const pathString = paths[i];
-		let pathUri = vscode.Uri.parse(pathString);
+		try {
 
-		for (const [name, type] of await vscode.workspace.fs.readDirectory(pathUri)) {
-			if (type === vscode.FileType.File) {
-				if (name.endsWith('.sol') === false) continue;
-				let name2 = name.replace(/\.sol$/, '').toLowerCase();
-				const filePath = posix.join(pathUri.fsPath, name);
-				// const stat = await vscode.workspace.fs.stat(path.with({ path: filePath }));
-				console.log('file path is ');
-				console.log(filePath);
-				const sampleTextEncoded = await vscode.workspace.fs.readFile(vscode.Uri.file(filePath));
-				const sampleText = new TextDecoder('utf-8').decode(sampleTextEncoded);
-				contractName2ContractText[name2] = sampleText;
+			const pathString = paths[i];
+			// vscode.workspace.fs.exis
+			if (fse.existsSync(pathString) !== true) continue;
+			let pathUri = vscode.Uri.parse(pathString);
+
+			for (const [name, type] of await vscode.workspace.fs.readDirectory(pathUri)) {
+				if (type === vscode.FileType.File) {
+					if (name.endsWith('.sol') === false) continue;
+					let name2 = name.replace(/\.sol$/, '').toLowerCase();
+					const filePath = posix.join(pathUri.fsPath, name);
+					// const stat = await vscode.workspace.fs.stat(path.with({ path: filePath }));
+					console.log('file path is ');
+					console.log(filePath);
+					const sampleTextEncoded = await vscode.workspace.fs.readFile(vscode.Uri.file(filePath));
+					const sampleText = new TextDecoder('utf-8').decode(sampleTextEncoded);
+					contractName2ContractText[name2] = sampleText;
+				}
 			}
+		} catch (error) {
+
 		}
 	}
 }
