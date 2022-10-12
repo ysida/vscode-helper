@@ -31,8 +31,8 @@
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
+    "compile": "./node_modules/typescript/bin/tsc -p ./",
+    "watch": "./node_modules/typescript/bin/tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"

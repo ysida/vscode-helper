@@ -11,7 +11,8 @@ export async function activate(context: vscode.ExtensionContext) {
 		vscode.env.clipboard.readText().then((text) => {
 
 			let str = text;
-			str = str.replace(/(?:\r\n|\r|\n)/g, '\\\\n');
+			str = str.replace(/(?:\r\n|\r|\n)/g, '\\n'); // put newlines special character
+			str = str.replace(/"/g, '\\"'); // replace " with \"
 
 			editor.edit(editBuilder => {
 				editBuilder.insert(editor.selection.active, str);
