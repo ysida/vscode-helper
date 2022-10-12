@@ -183,16 +183,16 @@ let initContractsData = async () => {
 }
 
 
-const disposableCopyFns = vscode.commands.registerCommand('sk-blockchain-helper.copy-functions', () => {
+const disposableCopyFns = vscode.commands.registerCommand('sk-vscode-helper.copy-functions', () => {
 	let fns = getFunctionsListFromDocumentForTestingAsString();
 	copyToClipboard(fns);
 });
 
-const disposableUpdateContractData = vscode.commands.registerCommand('sk-blockchain-helper.update-contracts-data', () => {
+const disposableUpdateContractData = vscode.commands.registerCommand('sk-vscode-helper.update-contracts-data', () => {
 	initContractsData();
 });
 
-const disposableImportContracts = vscode.commands.registerCommand('sk-blockchain-helper.import-contracts', async () => {
+const disposableImportContracts = vscode.commands.registerCommand('sk-vscode-helper.import-contracts', async () => {
 	let text = await vscode.env.clipboard.readText();
 	// TODO 
 });

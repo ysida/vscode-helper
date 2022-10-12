@@ -1,5 +1,5 @@
 {
-  "name": "sk-blockchain-helper",
+  "name": "sk-vscode-helper",
   "publisher": "oliveoverflow",
   "displayName": "Blockchain Truffle Suite Helper",
   "description": "add suggestions to truffle suite javascript testing files by reading solidity contracts",
@@ -13,23 +13,23 @@
   ],
   "activationEvents": [
     "*",
-    "onCommand:sk-blockchain-helper.copy-functions",
-    "onCommand:sk-blockchain-helper.import-contracts",
-    "onCommand:sk-blockchain-helper.update-contracts-data"
+    "onCommand:sk-vscode-helper.copy-functions",
+    "onCommand:sk-vscode-helper.import-contracts",
+    "onCommand:sk-vscode-helper.update-contracts-data"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "sk-blockchain-helper.copy-functions",
+        "command": "sk-vscode-helper.copy-functions",
         "title": "Sk - Copy Solidity Functions List"
       },
       {
-        "command": "sk-blockchain-helper.import-contracts",
+        "command": "sk-vscode-helper.import-contracts",
         "title": "Sk - Import Solidity Contracts from Clipboard"
       },
       {
-        "command": "sk-blockchain-helper.update-contracts-data",
+        "command": "sk-vscode-helper.update-contracts-data",
         "title": "Sk - Update Contracts Data"
       }
     ]
