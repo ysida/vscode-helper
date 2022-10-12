@@ -12,7 +12,7 @@ A Vscode plugin that adds various useful features.
 Many times I would like to grab a code block on the web and add it as a vscode snippet. 
 To do so, I copy the text, open snippets file, paste the text inside the body field o the snippet, then format the text line by line, either into a single line with double quotes, or add double quotes for each line. This is time consuming. 
 
-#### Problem 
+#### Solution 
 
 The following command
 VSHelper - paste as snippets escaped text
