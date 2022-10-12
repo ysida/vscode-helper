@@ -19,7 +19,7 @@
     "commands": [
       {
         "command": "sk-vscode-helper.paste-escaped-snippets-text",
-        "title": "VSHelper - paste escaped snippets text"
+        "title": "VSHelper - paste as snippets escaped text"
       }
     ]
   },
