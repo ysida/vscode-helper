@@ -1,8 +1,8 @@
 {
-  "name": "sk-vscode-helper",
-  "publisher": "oliveoverflow",
-  "displayName": "Blockchain Truffle Suite Helper",
-  "description": "add suggestions to truffle suite javascript testing files by reading solidity contracts",
+  "name": "sk-vscode-helperi",
+  "publisher": "oliveoverflowy",
+  "displayName": "VSCode Helper",
+  "description": "vscode helper",
   "version": "0.0.8",
   "icon": "images/icon.png",
   "engines": {
