@@ -9,14 +9,14 @@ export async function activate(context: vscode.ExtensionContext) {
 		if (!editor) return;
 
 		vscode.env.clipboard.readText().then((text) => {
-
 			let str = text;
-			str = str.replace(/(?:\r\n|\r|\n)$/gm, '\\n'); // put newlines special character
+			str = str.replace(/(?:\\n)/g, '\\\n'); // put newlines special character
+			str = str.replace(/(?:\r\n|\r|\n)/g, '\\n'); // put newlines special character
 			str = str.replace(/"/g, '\\"'); // replace " with \"
-
 			editor.edit(editBuilder => {
 				editBuilder.insert(editor.selection.active, str);
 			});
+			
 		});
 	});
 
