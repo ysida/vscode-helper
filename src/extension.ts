@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-const disposablePasteTextAsSnippet = vscode.commands.registerCommand('sk-vscode-helper.copy-functions', () => {
+const disposablePasteTextAsSnippet = vscode.commands.registerCommand('sk-vscode-helper.paste-snippets-template', () => {
 
 	const editor = vscode.window.activeTextEditor;
 	if (!editor) return;
