@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 
 export async function activate(context: vscode.ExtensionContext) {
 
-	const disposablePasteTextAsSnippet = vscode.commands.registerCommand('sk-vscode-helper.paste-snippets-template', () => {
+	const disposablePasteTextAsSnippet = vscode.commands.registerCommand('sk-vscode-helper.paste-escaped-snippets-text', () => {
 
 		const editor = vscode.window.activeTextEditor;
 		if (!editor) return;

@@ -12,21 +12,15 @@
     "Other"
   ],
   "activationEvents": [
-    "*",
-    "onCommand:sk-vscode-helper.paste-snippets-template",
-		"onCommand:extension.helloWorld"
+    "onCommand:sk-vscode-helper.paste-escaped-snippets-text"
 	],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "sk-vscode-helper.paste-snippets-template",
-        "title": "Sk - Paste Snippets Template"
-      },
-      {
-				"command": "extension.helloWorld",
-				"title": "Hello World"
-			}
+        "command": "sk-vscode-helper.paste-escaped-snippets-text",
+        "title": "VSHelper - paste escaped snippets text"
+      }
     ]
   },
   "scripts": {
