@@ -14,8 +14,8 @@ export async function activate(context: vscode.ExtensionContext) {
 			str = str.replace(/(?:\\n)/g, '\\\n'); // put newlines special character
 			str = str.replace(/(?:\r\n|\r|\n)/g, '\\n'); // put newlines special character
 
-			// str = str.replace(/(?:\\t)/g, '\\\t'); // put newlines special character
-			// str = str.replace(/(?:\t)/g, '\\t'); // put newlines special character
+			str = str.replace(/(?:\\t)/g, '\\\t'); // put newlines special character
+			str = str.replace(/(?:\t)/g, '\\t'); // put newlines special character
 
 			str = str.replace(/"/g, '\\"'); // replace " with \"
 			editor.edit(editBuilder => {
